@@ -30,7 +30,7 @@ const Login = async (req, res) => {
             }
 
             
-            const token = await jwt.sign(tokenData,JWT_SECRET_KEY, { expiresIn: 60 * 60 * 8 });
+            const token = jwt.sign(tokenData,JWT_SECRET_KEY, { expiresIn: 60 * 60 * 8 });
 
      
             

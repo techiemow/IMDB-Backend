@@ -1,23 +1,26 @@
 const mongoose = require('mongoose');
-const ProducerSchema = new mongoose.Schema({
-    name: {
-      type: String,
+const Schema =  mongoose.Schema;
 
-    },
-    gender: {
+
+const ProducerSchema = new Schema({
+  name: {
+      type: String,
+      required: true
+  },
+  gender: {
       type: String,
       enum: ['Male', 'Female', 'Other'],
-
-    },
-    dob: {
+      required: true
+  },
+  dob: {
       type: Date,
- 
-    },
-    bio: {
+      required: true
+  },
+  bio: {
       type: String,
-    
-    }
-  });
+  },
+  movies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Movie' }] // References to the movies produced by the producer
+})
 
 const ProducerModel = mongoose.model('Producers', ProducerSchema);
 

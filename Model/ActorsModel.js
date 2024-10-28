@@ -2,26 +2,25 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 // Actor Schema
-const ActorSchema = new mongoose.Schema({
-    name: {
+const ActorSchema = new Schema({
+  name: {
       type: String,
-
-    },
-    gender: {
+      required: true
+  },
+  gender: {
       type: String,
       enum: ['Male', 'Female', 'Other'],
-      
-    },
-    dob: {
+      required: true
+  },
+  dob: {
       type: Date,
-
-    },
-    bio: {
+      required: true
+  },
+  bio: {
       type: String,
-      
-    }
-  });
-
+  },
+  movies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Movie' }] // References to the movies the actor has acted in
+});
 const ActorModel = mongoose.model("Actors", ActorSchema)
 
 
