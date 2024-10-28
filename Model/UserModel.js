@@ -29,4 +29,5 @@ const UserSchema = new Schema({
 
 const UserModel = mongoose.model("Registrations",UserSchema)
 
-module.exports = {UserModel};
+
+module.exports = UserModel;

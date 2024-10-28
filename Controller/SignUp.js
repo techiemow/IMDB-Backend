@@ -1,8 +1,11 @@
-const { UserModel } = require("../../Model/UserSignupmodel");
+const UserModel = require("../Model/UserModel");
+
 
 const SignUp = async (req, res) => {
     try {
         const { username, password, phoneNumber, emailaddress } = req.body;
+        console.log(req.body);
+        
 
         if (username && password && emailaddress && phoneNumber) {
             const user = new UserModel({ username, emailaddress, password, phoneNumber });

@@ -4,12 +4,19 @@ const cors  = require("cors");
 const app =  express();
 const cookieParser = require("cookie-parser");
 const connectdb = require("./DB/DB");
+const Router = require("./Routes/Router");
 require("dotenv").config();
 
-app.use(cors())
+app.use(cors({
+    origin : process.env.FRONTEND_URL,
+    credentials : true
+}));
 app.use(bodyParser.json());
 
 app.use(cookieParser());
+
+app.use(Router);
+
 
 app.get("/" , (req,res)=>{
     res.send("WelCome to IMDB Website ");
