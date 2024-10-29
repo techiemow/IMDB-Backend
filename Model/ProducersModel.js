@@ -25,6 +25,6 @@ const ProducerSchema = new Schema({
   movies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Movie' }] // References to the movies produced by the producer
 })
 
-const ProducerModel = mongoose.model('Producers', ProducerSchema);
+const ProducerModel = mongoose.model('Producer', ProducerSchema);
 
 module.exports = ProducerModel;
