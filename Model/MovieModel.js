@@ -23,7 +23,7 @@ const MovieSchema = new Schema({
       unique: true,
   },
   actors: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Actor' }], // References to the actors in the movie
-  producer: { type: mongoose.Schema.Types.ObjectId, ref: 'Producer', required: true } // Reference to the producer of the movie
+  producer: { type: mongoose.Schema.Types.ObjectId, ref: 'Producer'} // Reference to the producer of the movie
 });
 
 

@@ -18,6 +18,10 @@ const ActorSchema = new Schema({
   },
   bio: {
       type: String,
+      required: true
+  },
+  ActorImages:{
+    type:Array,
   },
   movies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Movie' }] // References to the movies the actor has acted in
 });

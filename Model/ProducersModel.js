@@ -16,6 +16,9 @@ const ProducerSchema = new Schema({
       type: Date,
       required: true
   },
+  ProducerImages:{
+    type:Array
+  },
   bio: {
       type: String,
   },
