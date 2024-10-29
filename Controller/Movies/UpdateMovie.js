@@ -3,7 +3,8 @@ const MovieModel = require( "../../Model/MovieModel");
 const UpdateMovie = async(req,res) =>{
     const { id } = req.params;
     const updatedData = req.body;
-  
+     console.log(id);
+     
     try {
       const updatedMovie = await MovieModel.findByIdAndUpdate(id, updatedData, { new: true, runValidators: true });
      console.log(updatedMovie);
