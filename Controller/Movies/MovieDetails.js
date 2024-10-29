@@ -4,10 +4,14 @@ const MovieDetails = async (req, res) => {
     try {
         const movieId = req.params.id;
         // Use the correct field names: 'actors' and 'producer'
+    
+        
         const movie = await MovieModel.findById(movieId)
-            .populate('actors')  // Change this from 'Actor' to 'actors'
-            .populate('producer'); // Change this from 'Producer' to 'producer'
-
+            .populate('actors')  
+            .populate('producer'); 
+     
+        
+            
         if (!movie) {
             return res.status(404).json({ message: 'Movie not found' });
         }

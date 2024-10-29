@@ -13,10 +13,13 @@ const ProducerDetails = async (req, res) => {
         const producer = await ProducerModel.findById(id)
             .populate('movies'); // Populate the movies field
 
+
+        
+            
         if (!producer) {
             return res.status(404).json({ message: 'Producer not found' });
         }
-        res.json(producer);
+        res.json({message:"Updated successfully", success:true ,data:producer});
     } catch (error) {
         console.error(error); // Log the error for debugging
         res.status(500).json({ message: 'Server error' });

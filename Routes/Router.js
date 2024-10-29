@@ -18,6 +18,9 @@ const DisplayProducer = require("../Controller/Producers/DisplayProducer");
 const MovieDetails = require("../Controller/Movies/MovieDetails");
 const ActorDetails = require("../Controller/Actors/ActorDetails");
 const ProducerDetails = require("../Controller/Producers/ProducerDetails");
+const UpdateMovie = require("../Controller/Movies/UpdateMovie");
+const UpdateActor = require("../Controller/Actors/UpdateActor");
+const UpdateProducer = require("../Controller/Producers/UpdateProducer");
 
 
 
@@ -44,14 +47,17 @@ Router.post("/Logout", (req, res) => {
 Router.post("/AddMovie", authToken, AddNewMovie)
 Router.get("/RecentMovies", DisplayMovies )
 Router.get("/movie/:id", MovieDetails)
+Router.put("/UpdateMovie/:id",authToken,UpdateMovie)
 
 Router.post("/AddNewActor",authToken, AddNewActor)
 Router.get("/RecentActors", DisplayActor)
 Router.get("/actor/:id", ActorDetails)
+Router.put("/UpdateActor/:id",authToken,UpdateActor)
 
 Router.post("/AddNewProducer", authToken, producerAddition )
 Router.get("/RecentProducers", DisplayProducer )
 Router.get("/producer/:id",ProducerDetails)
+Router.put("/UpdateProducer/:id",authToken,UpdateProducer)
 
 
 

@@ -37,46 +37,52 @@ const findOrCreateActor = async (actorData) => {
   };
 
 
-const AddNewMovie = async (req, res) => {
+  const AddNewMovie = async (req, res) => {
     try {
-        const { name, releaseDate, plot, movieImages, actors, producer } = req.body;
-    
+        const { name, releaseDate, plot, movieImages, actors, producer, tmdbId } = req.body;
+
+        // Check if a movie with the same tmdbId exists
+        const existingMovie = await MovieModel.findOne({ tmdbId });
+        if (existingMovie) {
+            return res.status(400).json({ success: false, message: 'Movie with this tmdbId already exists.' });
+        }
+
         // Find or Create Producer
         const producerId = await findOrCreateProducer(producer);
-    
+
         // Find or Create Actors
         const actorPromises = actors.map(actor => findOrCreateActor(actor));
         const actorIds = await Promise.all(actorPromises);
-    
+
         // Create Movie
         const newMovie = new MovieModel({
-          name,
-          releaseDate,
-          plot,
-          movieImages,
-          producer: producerId, // Store producer ID
-          actors: actorIds, // Store array of actor IDs
+            name,
+            releaseDate,
+            plot,
+            movieImages,
+            tmdbId,
+            producer: producerId,
+            actors: actorIds,
         });
-    
+
         await newMovie.save();
-    
+
         // Update existing producer with the new movie
         await ProducerModel.updateOne(
-          { _id: producerId },
-          { $addToSet: { movies: newMovie._id } } // Add the movie ID to the movies array
+            { _id: producerId },
+            { $addToSet: { movies: newMovie._id } }
         );
-    
+
         // Update existing actors with the new movie
         await ActorModel.updateMany(
-          { _id: { $in: actorIds } },
-          { $addToSet: { movies: newMovie._id } } // Add the movie ID to the movies array
+            { _id: { $in: actorIds } },
+            { $addToSet: { movies: newMovie._id } } // Assuming each actor can have multiple movies
         );
-    
-        return res.status(201).json({ success: true, message: 'Movie added successfully!',data: newMovie });
-      } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: 'Server error', error: error.message });
+
+        res.status(201).json({ success: true, message: 'Movie added successfully!' });
+    } catch (error) {
+        console.error('Error adding new movie:', error);
+        res.status(500).json({ success: false, message: 'Server error.' });
     }
 };
-
 module.exports = AddNewMovie;

@@ -13,7 +13,7 @@ const ActorDetails = async(req,res) =>{
     
         const actor = await ActorModel.findById(id).populate('movies');
     
-        console.log(actor);
+     
     
         if (!actor) {
           return res.status(404).json({ message: 'Actor not found' });
