@@ -1,6 +1,5 @@
 const ActorModel = require('../../Model/ActorsModel'); // Adjust path as necessary
 const MovieModel = require('../../Model/MovieModel');
- // Ensure you have this imported
 
 // Helper function to generate a unique 6-digit number
 const generateUniqueTmdbId = async () => {
@@ -69,6 +68,14 @@ const AddNewActor = async (req, res) => {
 
     const savedActor = await newActor.save();
     
+    console.log("Saved actor", savedActor);
+    
+    // Update each movie with the new actor's ID
+    await MovieModel.updateMany(
+      { _id: { $in: newMovies } }, // Match movies created or associated with the actor
+      { $addToSet: { actors: savedActor._id } } // Add actor ID to the actors array in movies
+    );
+
     res.status(201).json({ success: true, message: 'Actor created successfully', data: savedActor });
   } catch (error) {
     console.error('Error creating actor:', error);
@@ -77,3 +84,4 @@ const AddNewActor = async (req, res) => {
 };
 
 module.exports = AddNewActor;
+

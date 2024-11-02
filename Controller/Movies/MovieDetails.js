@@ -1,20 +1,20 @@
+const { default: mongoose } = require("mongoose");
 const MovieModel = require("../../Model/MovieModel");
 
 const MovieDetails = async (req, res) => {
     try {
-        const movieId = req.params.id;
-        // Use the correct field names: 'actors' and 'producer'
-    
+        const id = req.params.id;
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: 'Invalid movie ID' });
+        }
         
-        const movie = await MovieModel.findById(movieId)
-            .populate('actors')  
-            .populate('producer'); 
-     
-        
-            
+        const movie = await MovieModel.findById(id).populate("actors").populate("producer");
+
         if (!movie) {
             return res.status(404).json({ message: 'Movie not found' });
         }
+
+        console.log('Fetched movie:', movie); // Log the movie
 
         res.json(movie); // Send the movie data as a response
     } catch (error) {
@@ -24,3 +24,4 @@ const MovieDetails = async (req, res) => {
 }
 
 module.exports = MovieDetails;
+

@@ -31,7 +31,7 @@ const UpdateProducer =  async(req,res) =>{
         { new: true } // Option to return the updated document
       );
   
-      console.log(ProducerChanges );
+   
       
       // If the producer is not found
       if (!ProducerChanges ) {

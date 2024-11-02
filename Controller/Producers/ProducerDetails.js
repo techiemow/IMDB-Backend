@@ -13,7 +13,9 @@ const ProducerDetails = async (req, res) => {
         const producer = await ProducerModel.findById(id)
             .populate('movies'); // Populate the movies field
 
-
+        
+    
+            
         
             
         if (!producer) {

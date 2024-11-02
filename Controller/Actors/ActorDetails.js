@@ -12,7 +12,7 @@ const ActorDetails = async(req,res) =>{
         }
     
         const actor = await ActorModel.findById(id).populate('movies');
-        console.log(actor);
+        
         
      
     

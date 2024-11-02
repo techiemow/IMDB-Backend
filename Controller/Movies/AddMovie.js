@@ -49,10 +49,14 @@ const findOrCreateActor = async (actorData) => {
 
         // Find or Create Producer
         const producerId = await findOrCreateProducer(producer);
+        console.log("producerId",producerId);
+
+        
 
         // Find or Create Actors
         const actorPromises = actors.map(actor => findOrCreateActor(actor));
         const actorIds = await Promise.all(actorPromises);
+        console.log("ActorIDs",actorIds );
 
         // Create Movie
         const newMovie = new MovieModel({
@@ -65,7 +69,7 @@ const findOrCreateActor = async (actorData) => {
             actors: actorIds,
         });
 
-        await newMovie.save();
+       const Movieadded =  await newMovie.save();
 
         // Update existing producer with the new movie
         await ProducerModel.updateOne(
@@ -79,7 +83,9 @@ const findOrCreateActor = async (actorData) => {
             { $addToSet: { movies: newMovie._id } } // Assuming each actor can have multiple movies
         );
 
-        res.status(201).json({ success: true, message: 'Movie added successfully!' });
+        console.log("MovieAdded",Movieadded);
+        
+        res.status(201).json({ success: true, message: 'Movie added successfully!' ,data: Movieadded });
     } catch (error) {
         console.error('Error adding new movie:', error);
         res.status(500).json({ success: false, message: 'Server error.' });

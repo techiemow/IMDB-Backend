@@ -5,7 +5,7 @@ const ProducerModel = require("../../Model/ProducersModel");
 
 const producerAddition = async (req, res) => {
   const { name, gender, dob, bio, ProducerImages, movies } = req.body;
-  console.log(name, gender, dob, bio, ProducerImages, movies);
+  
 
   const generateUniqueTmdbId = async () => {
     let tmdbId;
@@ -62,6 +62,7 @@ const producerAddition = async (req, res) => {
       movies: existingMovieIds, // Associate the found or newly created movie IDs
     });
 
+    
     res.status(201).json({ success: true, message: 'Producer added successfully', producer: newProducer });
   } catch (error) {
     console.error('Error adding producer:', error);
