@@ -1,72 +1,77 @@
 const MovieModel = require("../../Model/MovieModel");
 const ProducerModel = require("../../Model/ProducersModel");
 
-
-
 const producerAddition = async (req, res) => {
   const { name, gender, dob, bio, ProducerImages, movies } = req.body;
-  
 
+  console.log("Incoming data:", { name, gender, dob, bio, ProducerImages, movies });
+
+  // Generate a unique tmdbId for each movie if it doesn't already exist
   const generateUniqueTmdbId = async () => {
     let tmdbId;
     let isUnique = false;
-  
     while (!isUnique) {
-      // Generate a random number between 100000 and 999999
-      tmdbId = Math.floor(100000 + Math.random() * 900000);
-  
-      // Check if this tmdbId already exists in the Movie collection
+      tmdbId = Math.floor(100000 + Math.random() * 900000); // 6-digit random number
       const existingMovie = await MovieModel.findOne({ tmdbId });
-      if (!existingMovie) {
-        isUnique = true; // Found a unique tmdbId
-      }
+      if (!existingMovie) isUnique = true;
     }
-  
     return tmdbId;
   };
-  
 
   try {
-    // Create an array to store existing movie IDs
-    const existingMovieIds = [];
-
-    for (const movie of movies) {
-      const existingMovie = await MovieModel.findOne({ name: movie.name });
-
-      if (existingMovie) {
-        // If the movie already exists, push its ID to existingMovieIds
-        existingMovieIds.push(existingMovie._id);
-    
-           
-      } else {
-        const tmdbId = await generateUniqueTmdbId(); 
-        // If the movie does not exist, create a new movie document
-        const newMovie = await MovieModel.create({
-          name: movie.name,
-          releaseDate: movie.releaseDate,
-          plot: movie.plot,
-          movieImages: movie.movieImages,
-          tmdbId// Assume this is an array of image URLs
-        });
-        existingMovieIds.push(newMovie._id); // Push the new movie ID
-      }
+    // Check if movies array is provided
+    if (!movies || !Array.isArray(movies)) {
+      return res.status(400).json({ success: false, message: "Movies data must be an array." });
     }
 
-    // Create a new producer with the associated movie IDs
+    // Step 1: Create the new producer without movies initially
     const newProducer = await ProducerModel.create({
       name,
       gender,
       dob,
       bio,
       ProducerImages,
-      movies: existingMovieIds, // Associate the found or newly created movie IDs
+      movies: [], // Start with an empty array
     });
 
-    
-    res.status(201).json({ success: true, message: 'Producer added successfully', producer: newProducer });
+    const movieIds = [];
+
+    // Step 2: Add each movie, associating the producer ID if creating a new movie
+    for (const movie of movies) {
+      const existingMovie = await MovieModel.findOne({ name: movie.name });
+
+      if (existingMovie) {
+        movieIds.push(existingMovie._id); // Add existing movie's ID
+      } else {
+        // Generate a unique tmdbId
+        const tmdbId = await generateUniqueTmdbId();
+
+        // Create a new movie and associate the producer ID
+        const newMovie = await MovieModel.create({
+          name: movie.name,
+          releaseDate: movie.releaseDate,
+          plot: movie.plot,
+          movieImages: movie.movieImages,
+          tmdbId,
+          producer: newProducer._id, // Associate producer ID
+        });
+
+        movieIds.push(newMovie._id); // Add new movie's ID
+      }
+    }
+
+    // Step 3: Update the producer with the associated movie IDs
+    newProducer.movies = movieIds;
+    await newProducer.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Producer added successfully",
+      producer: newProducer,
+    });
   } catch (error) {
-    console.error('Error adding producer:', error);
-    res.status(500).json({ success: false, message: 'Server error' });
+    console.error("Error adding producer:", error);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
