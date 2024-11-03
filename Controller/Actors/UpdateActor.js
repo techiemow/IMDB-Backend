@@ -25,19 +25,28 @@ const UpdateActor = async (req, res) => {
         // Update the movies array if provided
         if (movies && Array.isArray(movies)) {
             for (const movie of movies) {
-                // Check if the movie with the provided tmdbId already exists
-                let existingMovie = await MovieModel.findOne({ tmdbId: movie.tmdbId });
-                
-                if (existingMovie) {
-                    // Update existing movie with the new actor reference
-                    existingMovie.actors.addToSet(actor._id); // Prevent duplicate references
-                    await existingMovie.save();
+                if (movie._id) { // Check if movie ID is provided
+                    // Update existing movie details by ID
+                    const existingMovie = await MovieModel.findById(movie._id);
+                    if (existingMovie) {
+                        // Update existing movie details
+                        existingMovie.name = movie.name || existingMovie.name;
+                        existingMovie.releaseDate = movie.releaseDate || existingMovie.releaseDate;
+                        existingMovie.plot = movie.plot || existingMovie.plot;
+                        existingMovie.movieImages = movie.movieImages || existingMovie.movieImages;
+                        existingMovie.producer = movie.producer || existingMovie.producer;
+                        
+                        // Save updated movie
+                        await existingMovie.save();
+                    } else {
+                        // If the movie with the given ID doesn't exist, handle it as needed
+                        return res.status(404).json({ message: `Movie with ID ${movie._id} not found` });
+                    }
                 } else {
-                    // If the tmdbId doesn't exist, generate a random one
+                    // If no ID is provided, treat it as a new movie
                     const randomTmdbId = generateRandomTmdbId();
                     
-                    // Create a new movie with the generated tmdbId
-                    existingMovie = new MovieModel({
+                    const newMovie = new MovieModel({
                         name: movie.name,
                         releaseDate: movie.releaseDate,
                         plot: movie.plot,
@@ -47,12 +56,12 @@ const UpdateActor = async (req, res) => {
                         producer: movie.producer // Include producer if provided
                     });
 
-                    await existingMovie.save(); // Save the new movie
+                    await newMovie.save(); // Save the new movie
                 }
             }
         }
     
-        console.log(actor ,"actor Updated ");
+        console.log(actor, "actor Updated");
         
         res.json({ message: "Actor updated successfully", actor });
     } catch (error) {

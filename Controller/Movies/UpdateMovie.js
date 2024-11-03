@@ -23,14 +23,20 @@ const UpdateMovie = async (req, res) => {
           dob: actor.dob,
           bio: actor.bio,
           ActorImages: actor.ActorImages || [],
+          movies: [id], // Associate the movie ID
         });
       } else {
-        // Update existing actor data
-        existingActor.name = actor.name; // Update any fields you want
+        // Update existing actor data and add the movie ID if not already present
+        existingActor.name = actor.name;
         existingActor.gender = actor.gender;
         existingActor.dob = actor.dob;
         existingActor.bio = actor.bio;
         existingActor.ActorImages = actor.ActorImages || [];
+        
+        if (!existingActor.movies.includes(id)) {
+          existingActor.movies.push(id); // Add the movie ID if not present
+        }
+        
         await existingActor.save(); // Save the updated actor document
       }
 
@@ -49,14 +55,20 @@ const UpdateMovie = async (req, res) => {
         dob: updatedData.producer.dob,
         bio: updatedData.producer.bio,
         ProducerImages: updatedData.producer.ProducerImages || [],
+        movies: [id], // Associate the movie ID
       });
     } else {
-      // Update existing producer data
+      // Update existing producer data and add the movie ID if not already present
       existingProducer.name = updatedData.producer.name;
       existingProducer.gender = updatedData.producer.gender;
       existingProducer.dob = updatedData.producer.dob;
       existingProducer.bio = updatedData.producer.bio;
       existingProducer.ProducerImages = updatedData.producer.ProducerImages || [];
+      
+      if (!existingProducer.movies.includes(id)) {
+        existingProducer.movies.push(id); // Add the movie ID if not present
+      }
+      
       await existingProducer.save(); // Save the updated producer document
     }
 
